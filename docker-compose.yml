@@ -1,0 +1,32 @@
+version: "3.2"
+
+services:
+  nginx:
+    build:
+      context: ./docker/nginx
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    volumes:
+      - ./app:/var/www/html
+    networks:
+      - app-network
+    restart: unless-stopped
+    depends_on:
+      - fpm
+  fpm:
+    build:
+      context: ./docker/php
+      dockerfile: Dockerfile
+    volumes:
+      - ./app:/var/www/html
+    ports:
+      - "9000:9000"
+    networks:
+      - app-network
+    restart: always
+
+
+networks:
+  app-network:
+    driver: bridge
